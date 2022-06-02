@@ -5,7 +5,7 @@
 	<title>More Coin</title>
 	<meta charset="UTF-8">
 	<meta name="format-detection" content="telephone=no">
-	<link rel="stylesheet" href="css/style.min.css?_v=20220531220757">
+	<link rel="stylesheet" href="css/style.min.css?_v=20220602142610">
 	<link rel="shortcut icon" href="favicon.ico">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
 </head>
@@ -127,54 +127,6 @@
 												</div>
 											</div>
 										</div>
-
-										<!-- <div class="box-training__pets pets">
-											<div class="pets__body">
-												<div class="pets__item">
-													<div class="pets__item-body">
-														<div class="pets__image">
-															<picture><source srcset="img/other/chick.webp" type="image/webp"><img src="img/other/chick.png" alt="Image"></picture>
-														</div>
-														<div class="pets__coeff">x1.5</div>
-														<div class="pets__icon">
-															<picture><source srcset="img/icons/btn-ok.webp" type="image/webp"><img src="img/icons/btn-ok.png" alt="Icon"></picture>
-														</div>
-													</div>
-												</div>
-												<div class="pets__item _hide">
-													<div class="pets__item-body">
-														<div class="pets__image">
-															<picture><source srcset="img/other/wolf.webp" type="image/webp"><img src="img/other/wolf.png" alt="Image"></picture>
-														</div>
-														<div class="pets__coeff">x1.8</div>
-														<div class="pets__icon">
-															<picture><source srcset="img/icons/btn-ok.webp" type="image/webp"><img src="img/icons/btn-ok.png" alt="Icon"></picture>
-														</div>
-														<div class="pets__sub-text">
-															<picture><source srcset="img/icons/coin.webp" type="image/webp"><img src="img/icons/coin.png" alt="Icon"></picture>
-															<div class="pets__price">100k</div>
-														</div>
-													</div>
-												</div>
-												<div class="pets__item _hide">
-													<div class="pets__item-body">
-														<div class="pets__image">
-															<picture><source srcset="img/other/fairy.webp" type="image/webp"><img src="img/other/fairy.png" alt="Image"></picture>
-														</div>
-														<div class="pets__coeff">x2.0</div>
-														<div class="pets__icon">
-															<picture><source srcset="img/icons/btn-ok.webp" type="image/webp"><img src="img/icons/btn-ok.png" alt="Icon"></picture>
-														</div>
-														<div class="pets__sub-text">
-															<picture><source srcset="img/icons/coin.webp" type="image/webp"><img src="img/icons/coin.png" alt="Icon"></picture>
-															<div class="pets__price">200k</div>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div> -->
-
-
 										<div class="box-training__footer">
 											<div class="box-training__button button"></div>
 										</div>
@@ -275,14 +227,13 @@
 					<div class="main__bacgrounds">
 						<div class="main__image-fox">
 							<picture><source srcset="img/other/fox.webp" type="image/webp"><img src="img/other/fox.png" alt="Image"></picture>
+							<div class="main__image-chick">
+								<picture><source srcset="img/other/chick.webp" type="image/webp"><img src="img/other/chick.png" alt="Image"></picture>
+							</div>
+							<div class="main__button-pets button-pets">
+								<p>Pet</p>
+							</div>
 						</div>
-						<div class="main__image-chick">
-							<picture><source srcset="img/other/chick.webp" type="image/webp"><img src="img/other/chick.png" alt="Image"></picture>
-
-						</div>
-					</div>
-					<div class="main__button-pets button-pets">
-						<p>Pet</p>
 					</div>
 					<div class="main__bet">
 						<div class="box-training__image">
@@ -413,29 +364,74 @@
 						<div class="game__image">
 							<img src="img/icons/fox.gif" alt="Image">
 						</div>
+						<div class="game__start-image"></div>
 						<div class="game__icon">
 							<picture><source srcset="img/other/chick.webp" type="image/webp"><img src="img/other/chick.png" alt="Icon"></picture>
 						</div>
 					</div>
 					<div class="game__grounds">
-						<div class="game__ground game__ground_1">
+						<!-- <div class="game__ground game__ground_1">
 							<picture><source srcset="img/other/ground-1.webp" type="image/webp"><img src="img/other/ground-1.png" alt="Image"></picture>
 						</div>
 						<div class="game__ground game__ground_2">
 							<picture><source srcset="img/other/ground-2.webp" type="image/webp"><img src="img/other/ground-2.png" alt="Image"></picture>
-						</div>
+						</div> -->
 					</div>
-					<div class="game__button-jump button-jump">
+					<div class="game__button-jump button-jump _hold">
 						<div class="button-jump__arrow-up"></div>
 					</div>
 				</div>
-				<div class="pin">1</div>
-				<div class="pin_2">2</div>
-
+				<div class="pin_2"></div>
+				<div class="timer">
+					<div class="timer__count">3</div>
+				</div>
+				<div class="game__pause pause">
+					<div class="pause__body">
+						<div class="box-training__image">
+							<div class="box-training__bg-text">pause</div>
+							<picture><source srcset="img/other/bg-table.webp" type="image/webp"><img src="img/other/bg-table.png" alt="Image"></picture>
+							<div class="box-training__stars-box">
+								<div class="box-training__star">
+									<picture><source srcset="img/other/star.webp" type="image/webp"><img src="img/other/star.png" alt="Icon"></picture>
+								</div>
+								<div class="box-training__count-stars">0</div>
+							</div>
+							<div class="box-training__footer">
+								<div class="box-training__button-restart button-restart"></div>
+								<div class="box-training__button-ok button"></div>
+								<a href="index.html" class="box-training__button-home button-home button-home_pause"></a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="game__gameover gameover">
+					<div class="gameover__body">
+						<div class="box-training__image">
+							<div class="box-training__bg-text">game over</div>
+							<picture><source srcset="img/other/bg-table.webp" type="image/webp"><img src="img/other/bg-table.png" alt="Image"></picture>
+							<div class="box-training__stars-box box-training__stars-box_go">
+								<div class="box-training__star box-training__star_go">
+									<picture><source srcset="img/other/star.webp" type="image/webp"><img src="img/other/star.png" alt="Icon"></picture>
+								</div>
+								<div class="box-training__count-stars">0</div>
+							</div>
+							<div class="box-training__coins-box">
+								<div class="box-training__coin">
+									<picture><source srcset="img/icons/coin.webp" type="image/webp"><img src="img/icons/coin.png" alt="Icon"></picture>
+								</div>
+								<div class="box-training__count-coins">+0</div>
+							</div>
+							<div class="box-training__footer">
+								<div class="box-training__button-restart button-restart"></div>
+								<a href="index.html" class="box-training__button-home button-home button-home_pause"></a>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
-	<script src="js/app.min.js?_v=20220531220757"></script>
+	<script src="js/app.min.js?_v=20220602142610"></script>
 </body>
 
 </html>

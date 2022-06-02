@@ -77,6 +77,22 @@
     function get_random(min, max) {
         return Math.floor(Math.random() * (max - min) + min);
     }
+    function add_money(count, block, delay, delay_off) {
+        let money = +sessionStorage.getItem("money") + count;
+        setTimeout((() => {
+            sessionStorage.setItem("money", money);
+            document.querySelectorAll(block).forEach((el => el.textContent = sessionStorage.getItem("money")));
+            document.querySelectorAll(block).forEach((el => el.classList.add("_anim-add-money")));
+        }), delay);
+        setTimeout((() => {
+            document.querySelectorAll(block).forEach((el => el.classList.remove("_anim-add-money")));
+        }), delay_off);
+    }
+    function clearAll(windowObject) {
+        var id = Math.max(windowObject.setInterval(noop, 1e3));
+        while (id--) windowObject.clearInterval(id);
+        function noop() {}
+    }
     let anim_items = document.querySelectorAll(".icon-anim img");
     function get_random_animate() {
         let number = get_random(0, 3);
@@ -176,8 +192,8 @@
         pets_text_3.classList.add("pets__text");
         pets_text_2.classList.add("_hide");
         pets_text_3.classList.add("_hide");
-        pets_text_2.textContent = "Collect 200 stars\tin one game";
-        pets_text_3.textContent = "Collect 400 stars\tin one game";
+        pets_text_2.textContent = "Collect 80 stars\tin one game";
+        pets_text_3.textContent = "Collect 120 stars\tin one game";
         let pets_sub_text_2 = document.createElement("div");
         let pets_sub_text_3 = document.createElement("div");
         pets_sub_text_2.classList.add("pets__sub-text");
@@ -227,50 +243,380 @@
         if (sessionStorage.getItem("character-2")) document.querySelectorAll(".pets__item")[1].classList.remove("_hide");
         if (sessionStorage.getItem("character-3")) document.querySelectorAll(".pets__item")[2].classList.remove("_hide");
     }
+    function write_active_pet_header_game() {
+        let active_pet = +sessionStorage.getItem("current-pet");
+        if (1 == active_pet) {
+            document.querySelector(".pet-header__icon img").setAttribute("src", "img/other/chick.png");
+            document.querySelector(".pet-header__icon img").style.transform = "rotateY(-180deg)";
+            sessionStorage.setItem("coeff", 1.5);
+        } else if (2 == active_pet) {
+            document.querySelector(".pet-header__icon img").setAttribute("src", "img/other/wolf.png");
+            document.querySelector(".pet-header__icon img").style.transform = "rotateY(0deg)";
+            document.querySelector(".pet-header__coeff").textContent = "1.8";
+            document.querySelector(".game__icon img").setAttribute("src", "img/other/wolf.png");
+            document.querySelector(".game__icon img").style.transform = "rotateY(0deg)";
+            sessionStorage.setItem("coeff", 1.8);
+        } else if (3 == active_pet) {
+            document.querySelector(".pet-header__icon img").setAttribute("src", "img/other/fairy.png");
+            document.querySelector(".pet-header__icon img").style.transform = "rotateY(0deg)";
+            document.querySelector(".pet-header__coeff").textContent = "2.0";
+            document.querySelector(".game__icon img").setAttribute("src", "img/other/fairy.png");
+            document.querySelector(".game__icon img").style.transform = "rotateY(0deg)";
+            sessionStorage.setItem("coeff", 2);
+        }
+    }
     const config_game = {
         hero: document.querySelector(".game__hero"),
-        pin_2: document.querySelector(".pins__pin_middle"),
-        pin_3: document.querySelector(".pins__pin_end")
+        ground_bottom: -100,
+        window_width: document.documentElement.clientWidth,
+        stars: 0,
+        count_win: 0,
+        timerGround: false,
+        timerCheckGameOver: false,
+        timerCheckStars: false,
+        loose: false,
+        timerGroundCreate: false
     };
-    if (document.querySelector(".game")) ;
     function jump_hero() {
-        let count = 0;
-        const element = document.querySelector(".game__hero");
-        const style = window.getComputedStyle(element);
-        const coord_bottom = parseInt(style.bottom, 10);
-        let timerId = setInterval((() => {
-            count += 3;
-            config_game.hero.style.bottom = `${coord_bottom + count}px`;
-            if (count >= 51) clearInterval(timerId);
-        }), 10);
+        document.querySelector(".game__hero").classList.add("_jump");
         setTimeout((() => {
-            count = 0;
-            let timerId2 = setInterval((() => {
-                count += 3;
-                config_game.hero.style.bottom = `${coord_bottom + 50 - count}px`;
-                if (count >= 51) {
-                    config_game.hero.style.bottom = `${coord_bottom}px`;
-                    clearInterval(timerId2);
-                }
-            }), 10);
-        }), 250);
+            document.querySelector(".game__hero").classList.remove("_jump");
+        }), 600);
         document.querySelector(".game__button-jump").classList.add("_hold");
         setTimeout((() => {
             document.querySelector(".game__button-jump").classList.remove("_hold");
         }), 550);
     }
-    function get_coord_next_ground() {
-        let pin = document.querySelector(".pin_2");
-        let left = pin.getBoundingClientRect().left - 3;
+    function get_coord_ground(item, num) {
+        let pin = document.querySelector(item);
+        let left = pin.getBoundingClientRect().left + num;
         let top = pin.getBoundingClientRect().top - 3;
         let block = document.elementFromPoint(left, top);
         return block;
     }
-    setInterval((() => {
-        let ground = get_coord_next_ground();
-        console.log(`ground - ${ground}`);
-        if (!ground.classList.contains(".game__ground")) ;
-    }), 20);
+    function create_start_ground(num, left, prog) {
+        let count = left;
+        let ground = document.createElement("div");
+        ground.classList.add("game__ground");
+        ground.style.left = `${left}%`;
+        ground.style.bottom = `${config_game.ground_bottom}px`;
+        ground.style.zIndex = `2`;
+        let image = document.createElement("img");
+        image.setAttribute("src", `img/other/ground-${num}.png`);
+        ground.append(image);
+        document.querySelector(".game__grounds").append(ground);
+        if (1 == prog) {
+            setTimeout((() => {
+                setInterval((() => {
+                    count--;
+                    ground.style.left = `${count}%`;
+                }), 50);
+            }), 3500);
+            setTimeout((() => {
+                ground.remove();
+            }), 1e4);
+        }
+    }
+    function create_start_grounds_width(program) {
+        if (config_game.window_width <= 600) create_start_ground(1, 3, program); else if (config_game.window_width > 600 && config_game.window_width <= 700) {
+            create_start_ground(1, 3, program);
+            create_start_ground(2, 90, program);
+        } else if (config_game.window_width > 700 && config_game.window_width <= 900) {
+            create_start_ground(1, 3, program);
+            create_start_ground(2, 80, program);
+        } else if (config_game.window_width > 900 && config_game.window_width <= 1100) {
+            create_start_ground(1, 3, program);
+            create_start_ground(1, 70, program);
+        } else if (config_game.window_width > 1100) {
+            create_start_ground(1, 3, program);
+            create_start_ground(1, 60, program);
+        }
+    }
+    function create_ground() {
+        let array_gorunds = [];
+        let count_stars = config_game.stars;
+        let rand_num = 0;
+        let star_chance_array = [];
+        let star_program = 0;
+        if (count_stars < 10) {
+            array_gorunds = [ 1, 1, 1, 1, 1, 2, 3, 4 ];
+            rand_num = get_random(0, 8);
+            star_chance_array = [ 1, 2, 3 ];
+            star_program = get_random(0, 3);
+        } else if (count_stars >= 10 && count_stars < 20) {
+            array_gorunds = [ 1, 1, 2, 3, 4 ];
+            rand_num = get_random(0, 5);
+            star_chance_array = [ 0, 1, 2, 3 ];
+            star_program = get_random(0, 4);
+        } else if (count_stars >= 20) {
+            array_gorunds = [ 1, 2, 2, 3, 3, 4, 4 ];
+            rand_num = get_random(0, 7);
+            star_chance_array = [ 0, 0, 1, 1, 2, 3 ];
+            star_program = get_random(0, 6);
+        }
+        let count = 100;
+        let ground = document.createElement("div");
+        ground.classList.add("game__ground");
+        ground.style.left = `${count}%`;
+        ground.style.bottom = `${config_game.ground_bottom}px`;
+        let image = document.createElement("img");
+        image.setAttribute("src", `img/other/ground-${array_gorunds[rand_num]}.png`);
+        ground.append(image);
+        let stars = [ create_star(), create_star(), create_star() ];
+        let rand = [ get_random(30, 70), get_random(0, 25), get_random(30, 55), get_random(60, 90) ];
+        if (0 == star_chance_array[star_program]) {
+            config_game.timerGround = setInterval((() => {
+                count--;
+                ground.style.left = `${count}%`;
+            }), 50);
+            document.querySelector(".game__grounds").append(ground);
+            setTimeout((() => {
+                ground.remove();
+            }), 1e4);
+        } else if (1 == star_chance_array[star_program]) {
+            if (1 == array_gorunds[rand_num]) {
+                stars[0].style.left = `${rand[0]}%`;
+                stars[0].style.top = `0px`;
+                ground.append(stars[0]);
+                config_game.timerGround = setInterval((() => {
+                    count--;
+                    ground.style.left = `${count}%`;
+                }), 50);
+            } else if (2 == array_gorunds[rand_num] || 3 == array_gorunds[rand_num] || 4 == array_gorunds[rand_num]) {
+                stars[0].style.left = `${rand[0]}%`;
+                stars[0].style.top = `0px`;
+                ground.append(stars[0]);
+                config_game.timerGround = setInterval((() => {
+                    count--;
+                    ground.style.left = `${count}%`;
+                }), 50);
+            }
+            document.querySelector(".game__grounds").append(ground);
+            setTimeout((() => {
+                ground.remove();
+            }), 1e4);
+        } else if (2 == star_chance_array[star_program]) {
+            if (1 == array_gorunds[rand_num]) {
+                stars[0].style.left = `${rand[1]}%`;
+                stars[0].style.top = `0px`;
+                stars[1].style.left = `${rand[3]}%`;
+                stars[1].style.top = `$0px`;
+                ground.append(stars[0], stars[1]);
+                document.querySelector(".game__grounds").append(ground);
+                config_game.timerGround = setInterval((() => {
+                    count--;
+                    ground.style.left = `${count}%`;
+                }), 50);
+                setTimeout((() => {
+                    ground.remove();
+                }), 1e4);
+            } else if (2 == array_gorunds[rand_num] || 3 == array_gorunds[rand_num] || 4 == array_gorunds[rand_num]) {
+                stars[0].style.left = `${rand[0]}%`;
+                stars[0].style.top = `0px`;
+                ground.append(stars[0]);
+                document.querySelector(".game__grounds").append(ground);
+                config_game.timerGround = setInterval((() => {
+                    count--;
+                    ground.style.left = `${count}%`;
+                }), 50);
+                setTimeout((() => {
+                    ground.remove();
+                }), 1e4);
+            }
+        } else if (3 == star_chance_array[star_program]) if (1 == array_gorunds[rand_num]) {
+            stars[0].style.left = `${rand[1]}%`;
+            stars[0].style.top = `0px`;
+            stars[1].style.left = `${rand[2]}%`;
+            stars[1].style.top = `0px`;
+            stars[2].style.left = `${rand[3]}%`;
+            stars[2].style.top = `0px`;
+            ground.append(stars[0], stars[1], stars[2]);
+            document.querySelector(".game__grounds").append(ground);
+            config_game.timerGround = setInterval((() => {
+                count--;
+                ground.style.left = `${count}%`;
+            }), 50);
+            setTimeout((() => {
+                ground.remove();
+            }), 1e4);
+        } else if (2 == array_gorunds[rand_num] || 3 == array_gorunds[rand_num] || 4 == array_gorunds[rand_num]) {
+            stars[0].style.left = `${rand[0]}%`;
+            stars[0].style.top = `0px`;
+            ground.append(stars[0]);
+            document.querySelector(".game__grounds").append(ground);
+            config_game.timerGround = setInterval((() => {
+                count--;
+                ground.style.left = `${count}%`;
+            }), 50);
+            setTimeout((() => {
+                ground.remove();
+            }), 1e4);
+        }
+    }
+    function check_coins() {
+        let dot = document.createElement("div");
+        dot.style.position = "absolute";
+        dot.style.bottom = `40px`;
+        dot.style.right = `50px`;
+        dot.style.width = "5px";
+        dot.style.height = "5px";
+        dot.style.zIndex = "5";
+        document.querySelector(".game__hero").append(dot);
+        setTimeout((() => {
+            dot.remove();
+        }), 50);
+        let left_1 = dot.getBoundingClientRect().left + 6;
+        let top_1 = dot.getBoundingClientRect().top;
+        let star = document.elementFromPoint(left_1, top_1);
+        if (star.closest(".game__star")) give_stars(star.closest(".game__star"));
+    }
+    function give_stars(block) {
+        block.classList.add("_hide");
+        config_game.stars = config_game.stars + 1;
+        setTimeout((() => {
+            document.querySelector(".stars-header__value").textContent = config_game.stars;
+            block.remove();
+        }), 1e3);
+    }
+    function check_game_over() {
+        let dot = document.createElement("div");
+        dot.classList.add("_chek_over");
+        document.querySelector(".wrapper").append(dot);
+        setTimeout((() => {
+            dot.remove();
+        }), 50);
+        let left_1 = dot.getBoundingClientRect().left + 6;
+        let top_1 = dot.getBoundingClientRect().top;
+        let ground = document.elementFromPoint(left_1, top_1);
+        if (!ground.closest(".game__ground")) {
+            if (config_game.loose) return;
+            config_game.loose = true;
+            fox_down();
+            stop_intervals();
+            check_win_count();
+            check_win_character();
+            console.log(`config_game.count_win - ${config_game.count_win}`);
+            if (config_game.count_win > 0) {
+                document.querySelector(".box-training__count-coins").textContent = `+${config_game.count_win}`;
+                setTimeout((() => {
+                    add_money(+config_game.count_win, ".check");
+                }), 1e3);
+            } else document.querySelector(".box-training__count-coins").textContent = 0;
+            document.querySelectorAll(".box-training__count-stars").forEach((el => el.textContent = config_game.stars));
+            setTimeout((() => {
+                document.querySelector(".gameover").classList.add("_active");
+                document.querySelector(".wrapper").classList.remove("_anim-bg");
+            }), 1e3);
+        }
+    }
+    function check_win_character() {
+        if (config_game.stars >= 120 && !sessionStorage.getItem("character-3")) sessionStorage.setItem("character-3", true); else if (config_game.stars >= 80 && !sessionStorage.getItem("character-2")) sessionStorage.setItem("character-2", true);
+    }
+    function stop_intervals() {
+        clearAll(window);
+    }
+    function pause_game() {
+        document.querySelector(".timer").classList.remove("_active");
+        document.querySelector(".wrapper").classList.remove("_anim-bg");
+        document.querySelector(".game__hero").classList.remove("_active");
+    }
+    function play_after_pause() {
+        if (document.querySelector(".game__ground")) document.querySelectorAll(".game__ground").forEach((el => el.remove()));
+        create_start_grounds_width(1);
+        start_timer();
+        setTimeout((() => {
+            start_check_new_ground();
+            document.querySelector(".wrapper").classList.add("_anim-bg");
+            document.querySelector(".game__hero").classList.add("_active");
+            start_check();
+            start_check_stars();
+        }), 3500);
+    }
+    function start_game() {
+        start_timer();
+        create_start_grounds_width(1);
+        delete_money(+sessionStorage.getItem("current-bet"), ".check");
+        setTimeout((() => {
+            start_check_new_ground();
+            document.querySelector(".wrapper").classList.add("_anim-bg");
+            document.querySelector(".game__icon").classList.add("_anim");
+            document.querySelector(".game__hero").classList.add("_active");
+            document.querySelector(".game__button-jump").classList.remove("_hold");
+            start_check();
+            start_check_stars();
+        }), 3500);
+    }
+    function restart_game() {
+        config_game.count_win = 0;
+        config_game.loose = false;
+        config_game.stars = 0;
+        if (document.querySelector(".game__ground")) document.querySelectorAll(".game__ground").forEach((el => el.remove()));
+        document.querySelector(".box-training__count-stars").textContent = config_game.stars;
+        document.querySelector(".stars-header__value").textContent = config_game.stars;
+        document.querySelector(".game__hero").classList.remove("_hide");
+        document.querySelector(".game__hero").classList.remove("_active");
+        document.querySelector(".game__hero").classList.remove("_jump-down");
+        document.querySelector(".wrapper").classList.remove("_anim-bg");
+        document.querySelector(".game__icon").classList.remove("_anim");
+        document.querySelector(".game__button-jump").classList.add("_hold");
+        document.querySelector(".timer").classList.remove("_active");
+        document.querySelector(".pause").classList.remove("_active");
+        document.querySelector(".gameover").classList.remove("_active");
+        setTimeout((() => {
+            start_game();
+        }), 10);
+    }
+    function fox_down() {
+        document.querySelector(".game__hero").classList.add("_jump-down");
+        document.querySelector(".game__hero").classList.add("_hide");
+    }
+    function start_check() {
+        config_game.timerCheckGameOver = setInterval((() => {
+            if (!config_game.loose) check_game_over(); else clearInterval(config_game.timerCheckGameOver);
+        }), 10);
+    }
+    function stop_check() {
+        clearInterval(config_game.timerCheckGameOver);
+    }
+    function start_check_stars() {
+        if (!config_game.loose) config_game.timerCheckStars = setInterval((() => {
+            if (!config_game.loose) check_coins(); else clearInterval(config_game.timerCheckStars);
+        }), 10);
+    }
+    function check_win_count() {
+        let bet = +sessionStorage.getItem("current-bet");
+        let coeff = +sessionStorage.getItem("coeff");
+        if (config_game.stars >= 5 && config_game.stars < 10) config_game.count_win = bet * coeff; else if (config_game.stars >= 10 && config_game.stars < 15) config_game.count_win = 2 * bet * coeff; else if (config_game.stars >= 15 && config_game.stars < 20) config_game.count_win = 3 * bet * coeff; else if (config_game.stars >= 20 && config_game.stars < 25) config_game.count_win = 5 * bet * coeff; else if (config_game.stars >= 25 && config_game.stars < 35) config_game.count_win = 10 * bet * coeff; else if (config_game.stars >= 35 && config_game.stars < 50) config_game.count_win = 20 * bet * coeff; else if (config_game.stars >= 50) config_game.count_win = 50 * bet * coeff;
+    }
+    function start_check_new_ground() {
+        config_game.timerGroundCreate = setInterval((() => {
+            let ground = get_coord_ground(".pin_2", 5);
+            if (!ground.closest(".game__ground")) create_ground();
+        }), 600);
+    }
+    function start_timer() {
+        setTimeout((() => {
+            document.querySelector(".timer").classList.add("_active");
+            write_timer_count();
+        }), 500);
+    }
+    function write_timer_count() {
+        let count = 3;
+        document.querySelector(".timer__count").textContent = count;
+        let timer = setInterval((() => {
+            if (0 == count) clearInterval(timer);
+            count--;
+            document.querySelector(".timer__count").textContent = count;
+        }), 1e3);
+    }
+    function create_star() {
+        let item = document.createElement("div");
+        item.classList.add("game__star");
+        let image = document.createElement("img");
+        image.setAttribute("src", "img/other/star.png");
+        item.append(image);
+        return item;
+    }
     document.addEventListener("click", (e => {
         let targetElement = e.target;
         let current_bet = +sessionStorage.getItem("current-bet");
@@ -378,8 +724,37 @@
         if (targetElement.closest(".box-training__button-ok") && !document.querySelector(".training") && !document.querySelector(".main__button-pets").classList.contains("_hide")) {
             document.querySelector(".main").classList.add("_hide");
             document.querySelector(".game").classList.remove("_hide");
+            document.querySelector(".bet").textContent = sessionStorage.getItem("current-bet");
+            write_active_pet_header_game();
+            start_game();
         }
-        if (targetElement.closest(".game__button-jump")) jump_hero();
+        if (targetElement.closest(".box-training__button-ok") && document.querySelector(".game__pause").classList.contains("_active")) {
+            play_after_pause();
+            document.querySelector(".game__pause").classList.remove("_active");
+        }
+        if (targetElement.closest(".game__button-jump")) {
+            jump_hero();
+            stop_check();
+            setTimeout((() => {
+                check_game_over();
+            }), 700);
+            setTimeout((() => {
+                start_check();
+            }), 750);
+        }
+        if (targetElement.closest(".header__button-pause")) {
+            stop_intervals();
+            console.log(`config_game.timerCheckGameOver - ${config_game.timerCheckGameOver}`);
+            console.log(`config_game.timerCheckStars - ${config_game.timerCheckStars}`);
+            console.log(`config_game.timerGround - ${config_game.timerGround}`);
+            console.log(`config_game.timerGroundCreate - ${config_game.timerGroundCreate}`);
+            setTimeout((() => {
+                pause_game();
+            }), 50);
+            document.querySelector(".pause").classList.add("_active");
+            document.querySelector(".box-training__count-stars").textContent = config_game.stars;
+        }
+        if (targetElement.closest(".button-restart")) restart_game();
     }));
     window["FLS"] = true;
     isWebp();
