@@ -661,6 +661,7 @@
             document.querySelector(".training").classList.add("_anim");
             document.querySelector(".main").classList.remove("_hide");
             config_training.program = 1;
+            location.href = "index.html";
             setTimeout((() => {
                 document.querySelector(".training").remove();
             }), 2e3);
