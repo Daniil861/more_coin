@@ -302,7 +302,7 @@
         ground.style.bottom = `${config_game.ground_bottom}px`;
         ground.style.zIndex = `2`;
         let image = document.createElement("img");
-        if (document.documentElement.classList.contains("webp")) image.setAttribute("src", `img/other/ground-${num}.wepb`); else image.setAttribute("src", `img/other/ground-${num}.png`);
+        if (document.documentElement.classList.contains("webp")) image.setAttribute("src", `img/other/ground-${num}.webp`); else image.setAttribute("src", `img/other/ground-${num}.png`);
         ground.append(image);
         document.querySelector(".game__grounds").append(ground);
         if (1 == prog) {
