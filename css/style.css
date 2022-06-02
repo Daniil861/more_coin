@@ -636,22 +636,34 @@ body._hold {
 }
 
 .button-back {
-  width: 4.75rem;
-  height: 4.75rem;
   background: url("../img/icons/btn-back.png") center/contain no-repeat;
   transition: all 0.3s ease 0s;
+}
+@supports (width: clamp( 4.375rem , 0.8rem  +  10.4vw , 6rem )) {
+  .button-back {
+    width: clamp( 4.375rem , 0.8rem  +  10.4vw , 6rem );
+  }
+}
+@supports not (width: clamp( 4.375rem , 0.8rem  +  10.4vw , 6rem )) {
+  .button-back {
+    width: calc(4.375rem + 1.625 * (100vw - 34.375rem) / 15.625);
+  }
+}
+@supports (height: clamp( 4.375rem , 0.8rem  +  10.4vw , 6rem )) {
+  .button-back {
+    height: clamp( 4.375rem , 0.8rem  +  10.4vw , 6rem );
+  }
+}
+@supports not (height: clamp( 4.375rem , 0.8rem  +  10.4vw , 6rem )) {
+  .button-back {
+    height: calc(4.375rem + 1.625 * (100vw - 34.375rem) / 15.625);
+  }
 }
 .button-back._hide {
   display: none;
 }
 .button-back:active {
   transform: scale(0.97);
-}
-@media (min-width: 46.875em) {
-  .button-back {
-    width: 6rem;
-    height: 6rem;
-  }
 }
 
 .button-restart {
