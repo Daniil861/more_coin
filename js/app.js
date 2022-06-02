@@ -333,24 +333,18 @@
         }
     }
     function create_ground() {
-        let array_gorunds = [];
+        let array_gorunds = [ 1, 1, 1, 2, 3, 4 ];
         let count_stars = config_game.stars;
-        let rand_num = 0;
+        let rand_num = get_random(0, 6);
         let star_chance_array = [];
         let star_program = 0;
         if (count_stars < 10) {
-            array_gorunds = [ 1, 1, 1, 1, 1, 2, 3, 4 ];
-            rand_num = get_random(0, 8);
             star_chance_array = [ 1, 2, 3 ];
             star_program = get_random(0, 3);
         } else if (count_stars >= 10 && count_stars < 20) {
-            array_gorunds = [ 1, 1, 2, 3, 4 ];
-            rand_num = get_random(0, 5);
             star_chance_array = [ 0, 1, 2, 3 ];
             star_program = get_random(0, 4);
         } else if (count_stars >= 20) {
-            array_gorunds = [ 1, 2, 2, 3, 3, 4, 4 ];
-            rand_num = get_random(0, 7);
             star_chance_array = [ 0, 0, 1, 1, 2, 3 ];
             star_program = get_random(0, 6);
         }
@@ -453,14 +447,17 @@
             }), 1e4);
         }
     }
+    function create_star() {
+        let item = document.createElement("div");
+        item.classList.add("game__star");
+        let image = document.createElement("img");
+        image.setAttribute("src", "img/other/star.png");
+        item.append(image);
+        return item;
+    }
     function check_coins() {
         let dot = document.createElement("div");
-        dot.style.position = "absolute";
-        dot.style.bottom = `40px`;
-        dot.style.right = `50px`;
-        dot.style.width = "5px";
-        dot.style.height = "5px";
-        dot.style.zIndex = "5";
+        dot.classList.add("_check_coins");
         document.querySelector(".game__hero").append(dot);
         setTimeout((() => {
             dot.remove();
@@ -495,7 +492,6 @@
             stop_intervals();
             check_win_count();
             check_win_character();
-            console.log(`config_game.count_win - ${config_game.count_win}`);
             if (config_game.count_win > 0) {
                 document.querySelector(".box-training__count-coins").textContent = `+${config_game.count_win}`;
                 setTimeout((() => {
@@ -608,14 +604,6 @@
             count--;
             document.querySelector(".timer__count").textContent = count;
         }), 1e3);
-    }
-    function create_star() {
-        let item = document.createElement("div");
-        item.classList.add("game__star");
-        let image = document.createElement("img");
-        image.setAttribute("src", "img/other/star.png");
-        item.append(image);
-        return item;
     }
     document.addEventListener("click", (e => {
         let targetElement = e.target;
@@ -744,10 +732,6 @@
         }
         if (targetElement.closest(".header__button-pause")) {
             stop_intervals();
-            console.log(`config_game.timerCheckGameOver - ${config_game.timerCheckGameOver}`);
-            console.log(`config_game.timerCheckStars - ${config_game.timerCheckStars}`);
-            console.log(`config_game.timerGround - ${config_game.timerGround}`);
-            console.log(`config_game.timerGroundCreate - ${config_game.timerGroundCreate}`);
             setTimeout((() => {
                 pause_game();
             }), 50);
