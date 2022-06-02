@@ -354,7 +354,7 @@
         ground.style.left = `${count}%`;
         ground.style.bottom = `${config_game.ground_bottom}px`;
         let image = document.createElement("img");
-        image.setAttribute("src", `img/other/ground-${array_gorunds[rand_num]}.png`);
+        if (document.documentElement.classList.contains("webp")) image.setAttribute("src", `img/other/ground-${array_gorunds[rand_num]}.webp`); else image.setAttribute("src", `img/other/ground-${array_gorunds[rand_num]}.png`);
         ground.append(image);
         let stars = [ create_star(), create_star(), create_star() ];
         let rand = [ get_random(30, 70), get_random(0, 25), get_random(30, 55), get_random(60, 90) ];
