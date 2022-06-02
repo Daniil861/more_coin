@@ -1428,6 +1428,15 @@ body._hold {
   }
 }
 
+._check_coins {
+  position: absolute;
+  bottom: 2.5rem;
+  right: 3.125rem;
+  width: 0.3125rem;
+  height: 0.3125rem;
+  z-index: 5;
+}
+
 .game {
   position: absolute;
   top: 0;
