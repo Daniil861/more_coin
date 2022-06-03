@@ -611,7 +611,7 @@ body._hold {
   justify-content: center;
   align-items: center;
   position: absolute;
-  bottom: 30%;
+  bottom: 35%;
   right: 2.5rem;
   width: 8.3125rem;
   height: 3.125rem;
@@ -623,6 +623,13 @@ body._hold {
 @media (max-width: 45.625em) {
   .button-pets {
     bottom: 35%;
+  }
+}
+@media (min-height: 37.5em) {
+  .button-pets {
+    right: -9.375rem;
+    width: 12.5rem;
+    height: 5rem;
   }
 }
 .button-pets p {
@@ -1334,6 +1341,12 @@ body._hold {
   position: absolute;
   right: 0;
   top: 0;
+}
+@media (min-height: 37.5em) {
+  .main__bet {
+    top: 50%;
+    transform: translateY(-50%);
+  }
 }
 .main__image-fox {
   position: absolute;
